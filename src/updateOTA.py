@@ -1,9 +1,9 @@
 import glob, os
 
-project = 'FBTRapidplusOTA/src'
+project = 'src/main'
 binFiles = glob.glob(project + "*.bin")
 	
-file = open('FBTRapidplusOTA/src/main.ino', 'r')
+file = open(project + '.ino', 'r')
 lines = file.readlines()
 file.close()
 
