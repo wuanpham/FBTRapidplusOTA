@@ -1639,18 +1639,20 @@ void displayCLD::Update(void)
 
     this->display->setTextSize(2);
     this->display->setTextColor(WHITE);
-    this->display->setCursor(40, 90);
-    this->display->print("You have a new version!");
+    this->display->setCursor(40, 60);
+    this->display->println("You have a");
+    this->display->setCursor(70, 90);
+    this->display->println("new version!");
 
     this->display->setTextSize(1);
     this->display->setTextColor(RED);
-    this->display->setCursor(40, 120);
-    this->display->print("Press red button: update");
+    this->display->setCursor(40, 150);
+    this->display->println("Press red button: Update");
 
     this->display->setTextSize(1);
     this->display->setTextColor(GREEN);
-    this->display->setCursor(40, 150);
-    this->display->print("Press green button: later");
+    this->display->setCursor(40, 180);
+    this->display->println("Press green button: Skip");
   }
 }
 
@@ -1661,7 +1663,7 @@ void displayCLD::waittingUpdate(void)
 
   this->display->setTextSize(2);
   this->display->setTextColor(WHITE);
-  this->display->setCursor(40, 150);
+  this->display->setCursor(40, 100);
   this->display->print("Waitting...");
   delay(2000);
 }
