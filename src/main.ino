@@ -22,7 +22,7 @@ WebServer server(80);
 
 int currentVersion = 2;
 
-String baseUrl = "https://raw.githubursercontent.com/wuanpham/FBTRapidplusOTA/refs/heads/" + FirmwareVer + "/";
+String baseUrl = "https://raw.githubusercontent.com/wuanpham/FBTRapidplusOTA/refs/heads/" + FirmwareVer + "/";
 String checkFile = "updateOTA.json";
 
 void setup()
