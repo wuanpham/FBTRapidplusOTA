@@ -20,7 +20,7 @@ void performUpdate(Stream &updateSoure, size_t updateSize)
         size_t written = Update.writeStream(updateSoure);
         if (written == updateSize)
         {
-            info_displayln("Written: " + String(written) + "succesfully");
+            info_displayln("Written: " + String(written) + " succesfully");
         }
         else
         {
