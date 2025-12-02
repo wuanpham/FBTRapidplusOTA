@@ -178,8 +178,9 @@ void buttonProcess(e_statusbutton index)
         _displayCLD.type_infor = eSetPowerLed;
         _displayCLD.changeScreen = true;
       }
-      if (flagUpdate)
+      else if (_displayCLD.type_infor == eUpdate)
       {
+        flagUpdate = false;
         statusUpdate_t = update;
       }
       break;
@@ -266,9 +267,12 @@ void buttonProcess(e_statusbutton index)
         _displayCLD.changeScreen= true;
         _displayCLD.flag_calib_done = false;
       }
-      if (flagUpdate)
+      else if (_displayCLD.type_infor == eUpdate)
       {
+        flagUpdate = false;
         statusUpdate_t = skip;
+        _displayCLD.type_infor = escreenStart;
+        _displayCLD.changeScreen = true;
       }
       break;
     }
@@ -288,7 +292,7 @@ void buttonProcess(e_statusbutton index)
       if (_displayCLD.type_infor == eSettingMenu)
       {
         _displayCLD.type_infor = eSettingBluetooth;
-        _displayCLD.changeScreen= true;
+        _displayCLD.changeScreen = true;
         return;
       }
       if (_displayCLD.type_infor == eSetPowerLed)

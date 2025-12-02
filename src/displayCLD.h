@@ -57,7 +57,9 @@ typedef enum
     eCalibComplete,
     eSetPowerLed,
     eSavePowerLed,
-    eSaveCalib   //display set power led
+    eSaveCalib,   //display set power led
+
+    eUpdate
 
 } e_statuslcd;
 

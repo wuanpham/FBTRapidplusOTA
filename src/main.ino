@@ -20,7 +20,7 @@ buttonManager _buttonManager;
 
 WebServer server(80);
 
-int currentVersion = 3;
+int currentVersion = 2;
 
 String baseUrl = "https://raw.githubusercontent.com/wuanpham/FBTRapidplusOTA/refs/heads/" + FirmwareVer + "/";
 String checkFile = "updateOTA.json";
@@ -55,13 +55,19 @@ void setup()
   _Fan.begin();
   _PIDControl.timeoutSetting();
   
-  updateOTA();
-
+  beginOTA();
   postData_Chart();
+  checkFirmware();
 }
 
 void loop()
 {
+  if (flagUpdate == true)
+  {
+    _displayCLD.type_infor = eUpdate;
+    //_displayCLD.changeScreen = true;
+  }
+  
   _PIDControl.loop();
   _sensor6035.loop();
   _displayCLD.loop();
@@ -70,4 +76,5 @@ void loop()
   _Fan.loop(); // keep open the Fan
 
   server.handleClient();
+  updateOTA();
 }

@@ -1192,6 +1192,12 @@ void displayCLD::loop()
       this->changeScreen = false;
       break;
     }
+    case eUpdate:
+    {
+      this->Update();
+      this->changeScreen = false;
+      break;
+    }
     default:
       break;
     }
@@ -1632,28 +1638,25 @@ void displayCLD::set_flag_calib(void)
 
 void displayCLD::Update(void)
 {
-  while (!(statusUpdate_t))
-  {
-    this->display->fillScreen(BLACK);
-    this->display->drawRoundRect(8, 0, 305, 240, 10, Forte_Green);
+  this->display->fillScreen(BLACK);
+  this->display->drawRoundRect(8, 0, 305, 240, 10, Forte_Green);
 
-    this->display->setTextSize(2);
-    this->display->setTextColor(WHITE);
-    this->display->setCursor(40, 60);
-    this->display->println("You have a");
-    this->display->setCursor(70, 90);
-    this->display->println("new version!");
+  this->display->setTextSize(2);
+  this->display->setTextColor(WHITE);
+  this->display->setCursor(40, 60);
+  this->display->println("You have a");
+  this->display->setCursor(70, 90);
+  this->display->println("new version!");
 
-    this->display->setTextSize(1);
-    this->display->setTextColor(RED);
-    this->display->setCursor(40, 150);
-    this->display->println("Press red button: Update");
+  this->display->setTextSize(1);
+  this->display->setTextColor(RED);
+  this->display->setCursor(40, 150);
+  this->display->println("Press red button: Update");
 
-    this->display->setTextSize(1);
-    this->display->setTextColor(GREEN);
-    this->display->setCursor(40, 180);
-    this->display->println("Press green button: Skip");
-  }
+  this->display->setTextSize(1);
+  this->display->setTextColor(GREEN);
+  this->display->setCursor(40, 180);
+  this->display->println("Press green button: Skip");
 }
 
 void displayCLD::waittingUpdate(void)
@@ -1665,7 +1668,6 @@ void displayCLD::waittingUpdate(void)
   this->display->setTextColor(WHITE);
   this->display->setCursor(40, 100);
   this->display->print("Waitting...");
-  delay(2000);
 }
 
 displayCLD _displayCLD;

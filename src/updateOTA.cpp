@@ -1,7 +1,6 @@
 #include "updateOTA.h"
 
 int fwVersion = 0;
-bool fwCheck = false;
 bool flagUpdate = false;
 statusUpdate statusUpdate_t = none;
 String fwUrl = "", fwName = "";
@@ -15,40 +14,38 @@ static void rebootEspWithReason(String reason)
 
 void performUpdate(Stream &updateSoure, size_t updateSize)
 {
-    if (Update.begin(updateSize))
+    if (!Update.begin(updateSize))
     {
-        size_t written = Update.writeStream(updateSoure);
-        if (written == updateSize)
-        {
-            info_displayln("Written: " + String(written) + " succesfully");
-        }
-        else
-        {
-            info_displayln("Written only: " + String(written) + "/" + String(updateSize) + ". Retry?");
-        }
+        Update.printError(Serial);
+        return;
+    }
 
-        if (Update.end())
-        {
-            info_displayln("OTA done!");
-            if (Update.isFinished())
-            {
-                info_displayln("Update successfully completed. Rebooting...");
-            }
-            else
-            {
-                info_displayln("Update not finished? Something went wrong!");
-            }   
-        }
-        else
-        {
-            info_displayln("Error Occurred. Error #: " + String(Update.getError()));
-        }  
+    updateSoure.setTimeout(15000);
+
+    size_t written = Update.writeStream(updateSoure);
+
+    info_displayln("Written: " + String(written));
+
+    if (written != updateSize)
+    {
+        info_displayln("Written only: " + String(written) + "/" + String(updateSize) + ". Retry?");
+    }
+
+    if (!Update.end())
+    {
+        Update.printError(Serial);
+    }
+        
+    if (Update.isFinished())
+    {
+        info_displayln("Update successfully completed. Rebooting...");
     }
     else
     {
-        info_displayln("Not enough space to begin OTA");
-    }
+        info_displayln("Update not finished? Something went wrong!");
+    }   
 }
+
 
 void updateFromFS(fs::FS &fs)
 {
@@ -123,30 +120,33 @@ bool downloadFirmware()
 
 void checkFirmware()
 {
-    HTTPClient http;
-    http.begin(baseUrl + checkFile);
-    int httpCode = http.GET();
-    String payload = http.getString();
-    info_displayln(payload);
-    DynamicJsonDocument json(1024);
-    deserializeJson(json, payload);
-    if (httpCode == HTTP_CODE_OK)
+    if (WiFi.status() == WL_CONNECTED)
     {
-        fwVersion = json["versionCode"].as<int>();
-        fwName = json["fileName"].as<String>();
-        fwUrl = baseUrl + fwName;
-        if (fwVersion > currentVersion)
+        HTTPClient http;
+        http.begin(baseUrl + checkFile);
+        int httpCode = http.GET();
+        String payload = http.getString();
+        info_displayln(payload);
+        DynamicJsonDocument json(1024);
+        deserializeJson(json, payload);
+        if (httpCode == HTTP_CODE_OK)
         {
-            info_displayln("Firmware update available");
-            flagUpdate = true;
-            _displayCLD.Update();
+            fwVersion = json["versionCode"].as<int>();
+            fwName = json["fileName"].as<String>();
+            fwUrl = baseUrl + fwName;
+            if (fwVersion > currentVersion)
+            {
+                info_displayln("Firmware update available");
+                flagUpdate = true;
+            }
+            else
+            {
+                info_displayln("You have the lasted version");
+                flagUpdate = false;
+            }
         }
-        else
-        {
-            info_displayln("You have the lasted version");
-        }
+        http.end();
     }
-    http.end();
 }
 
 void beginOTA()
@@ -160,38 +160,22 @@ void beginOTA()
 
 void updateOTA()
 {
-     if ((WiFi.status() == WL_CONNECTED) && !fwCheck)
+     if ((WiFi.status() == WL_CONNECTED) && statusUpdate_t == update)
     {
-        beginOTA();
-        fwCheck = true;
-        info_displayln("Wifi connected. Checking for updates");
-        checkFirmware();
-        if (statusUpdate_t == update) 
+        _displayCLD.waittingUpdate();
+        if (SPIFFS.exists("/update.bin")) 
         {
-            _displayCLD.waittingUpdate();
-            if (SPIFFS.exists("/update.bin")) 
-            {
-                SPIFFS.remove("/update.bin");
-                info_displayln("Removed existing update file");
-            }
-            if (downloadFirmware()) 
-            {
-                info_displayln("Download completed");
-                updateFromFS(SPIFFS);
-            } 
-            else 
-            {
-                info_displayln("Download failed");
-            }
+            SPIFFS.remove("/update.bin");
+            info_displayln("Removed existing update file");
         }
-        else
+        if (downloadFirmware()) 
         {
-            flagUpdate = false;
-            info_displayln("Skip");
+            info_displayln("Download completed");
+            updateFromFS(SPIFFS);
+        } 
+        else 
+        {
+            info_displayln("Download failed");
         }
-    }
-    else 
-    {
-        info_displayln("Wifi not available");
     }
 }
