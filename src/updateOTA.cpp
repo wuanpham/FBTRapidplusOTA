@@ -14,6 +14,13 @@ static void rebootEspWithReason(String reason)
 
 void performUpdate(Stream &updateSoure, size_t updateSize)
 {
+    uint8_t header[32];
+    updateSoure.readBytes(header, 32);
+    for(int i=0;i<32;i++){
+        Serial.printf("%02X ", header[i]);
+    }
+    Serial.println();
+
     if (!Update.begin(updateSize))
     {
         Update.printError(Serial);
@@ -86,6 +93,7 @@ void updateFromFS(fs::FS &fs)
 bool downloadFirmware()
 {
     HTTPClient http;
+    http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
     bool status = false;
     info_displayln(fwUrl);
     File f = SPIFFS.open("/update.bin", "w");
@@ -93,6 +101,7 @@ bool downloadFirmware()
     {
         http.begin(fwUrl);
         int httpCode = http.GET();
+
         if (httpCode > 0)
         {
             if (httpCode == HTTP_CODE_OK)
@@ -123,14 +132,15 @@ void checkFirmware()
     if (WiFi.status() == WL_CONNECTED)
     {
         HTTPClient http;
+        http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
         http.begin(baseUrl + checkFile);
         int httpCode = http.GET();
-        String payload = http.getString();
-        info_displayln(payload);
-        DynamicJsonDocument json(1024);
-        deserializeJson(json, payload);
         if (httpCode == HTTP_CODE_OK)
         {
+            String payload = http.getString();
+            info_displayln(payload);
+            DynamicJsonDocument json(1024);
+            deserializeJson(json, payload);
             fwVersion = json["versionCode"].as<int>();
             fwName = json["fileName"].as<String>();
             fwUrl = baseUrl + fwName;
