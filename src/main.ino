@@ -20,7 +20,7 @@ buttonManager _buttonManager;
 
 WebServer server(80);
 
-int currentVersion = 1;
+int currentVersion = 3;
 
 String baseUrl = "https://raw.githubusercontent.com/wuanpham/FBTRapidplusOTA/" + FirmwareVer + "/";
 String checkFile = "updateOTA.json";
@@ -55,7 +55,7 @@ void setup()
   _Fan.begin();
   _PIDControl.timeoutSetting();
   
-  beginOTA();
+  //beginOTA();
   postData_Chart();
   checkFirmware();
 }
@@ -76,5 +76,5 @@ void loop()
   _Fan.loop(); // keep open the Fan
 
   server.handleClient();
-  updateOTA();
+  firmwareUpdate();
 }

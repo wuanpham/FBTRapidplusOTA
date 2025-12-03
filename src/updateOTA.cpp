@@ -189,3 +189,33 @@ void updateOTA()
         }
     }
 }
+
+void firmwareUpdate(void)
+{
+    if ((WiFi.status() == WL_CONNECTED) && statusUpdate_t == update)
+    {
+        _displayCLD.waittingUpdate();
+        WiFiClientSecure client;
+        client.setInsecure();
+        t_httpUpdate_return ret = httpUpdate.update(client, fwUrl);
+
+        switch (ret)
+        {
+        case HTTP_UPDATE_FAILED:
+            Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+            break;
+        case HTTP_UPDATE_NO_UPDATES:
+            Serial.println("HTTP_UPDATE_NO_UPDATES");
+            /* code */
+            break;
+        case HTTP_UPDATE_OK:
+            Serial.println("HTTP_UPDATE_OK");
+            /* code */
+            break;
+        
+        default:
+            break;
+        }
+        rebootEspWithReason("OTA done!");
+    }
+}

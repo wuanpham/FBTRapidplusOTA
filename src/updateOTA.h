@@ -17,6 +17,7 @@
 void beginOTA(void);
 void checkFirmware(void);
 void updateOTA(void);
+void firmwareUpdate(void);
 
 extern bool flagUpdate;
 
