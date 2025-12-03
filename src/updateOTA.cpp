@@ -12,6 +12,7 @@ static void rebootEspWithReason(String reason)
     ESP.restart();
 }
 
+/*
 void performUpdate(Stream &updateSoure, size_t updateSize)
 {
     uint8_t header[32];
@@ -127,6 +128,37 @@ bool downloadFirmware()
     return status;
 }
 
+void beginOTA()
+{
+    if (!SPIFFS.begin(true))
+    {
+        info_displayln("SPIFFS Mount Failed");
+        rebootEspWithReason("SPIFFS Mount Failed");
+    } 
+}
+
+void updateOTA()
+{
+     if ((WiFi.status() == WL_CONNECTED) && statusUpdate_t == update)
+    {
+        _displayCLD.waittingUpdate();
+        if (SPIFFS.exists("/update.bin")) 
+        {
+            SPIFFS.remove("/update.bin");
+            info_displayln("Removed existing update file");
+        }
+        if (downloadFirmware()) 
+        {
+            info_displayln("Download completed");
+            updateFromFS(SPIFFS);
+        } 
+        else 
+        {
+            info_displayln("Download failed");
+        }
+    }
+}
+*/
 void checkFirmware()
 {
     if (WiFi.status() == WL_CONNECTED)
@@ -159,37 +191,6 @@ void checkFirmware()
     }
 }
 
-void beginOTA()
-{
-    if (!SPIFFS.begin(true))
-    {
-        info_displayln("SPIFFS Mount Failed");
-        rebootEspWithReason("SPIFFS Mount Failed");
-    } 
-}
-
-void updateOTA()
-{
-     if ((WiFi.status() == WL_CONNECTED) && statusUpdate_t == update)
-    {
-        _displayCLD.waittingUpdate();
-        if (SPIFFS.exists("/update.bin")) 
-        {
-            SPIFFS.remove("/update.bin");
-            info_displayln("Removed existing update file");
-        }
-        if (downloadFirmware()) 
-        {
-            info_displayln("Download completed");
-            updateFromFS(SPIFFS);
-        } 
-        else 
-        {
-            info_displayln("Download failed");
-        }
-    }
-}
-
 void firmwareUpdate(void)
 {
     if ((WiFi.status() == WL_CONNECTED) && statusUpdate_t == update)
@@ -206,11 +207,9 @@ void firmwareUpdate(void)
             break;
         case HTTP_UPDATE_NO_UPDATES:
             Serial.println("HTTP_UPDATE_NO_UPDATES");
-            /* code */
             break;
         case HTTP_UPDATE_OK:
             Serial.println("HTTP_UPDATE_OK");
-            /* code */
             break;
         
         default:
