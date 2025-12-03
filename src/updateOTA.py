@@ -15,7 +15,7 @@ fileName = ""
 for line in lines:
 	if "int currentVersion" in line:
 		versionCode = int(''.join(i for i in line if i.isdigit()))
-		fileName = "firmware_v"+str(versionCode)+".bin"
+		fileName = "firmware.bin"
 	if "String baseUrl" in line:
 		baseUrl = line.split('"')[1::2][0]
 	if "String checkFile" in line:
