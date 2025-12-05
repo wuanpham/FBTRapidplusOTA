@@ -20,7 +20,7 @@ buttonManager _buttonManager;
 
 WebServer server(80);
 
-int currentVersion = 0;
+int currentVersion = 11;
 
 String baseUrl = "https://raw.githubusercontent.com/wuanpham/FBTRapidplusOTA/" + FirmwareVer + "/";
 String checkFile = "updateOTA.json";
