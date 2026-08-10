@@ -1,6 +1,6 @@
 {
-	"versionCode" : 16,
+	"versionCode" : 19,
 	"fileName" : "firmware.bin",
-	"version" : "2.4.0",
-	"content" : "update new features"
+	"version" : "2.4.3",
+	"content" : "New App Control feature"
 }
